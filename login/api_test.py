@@ -1,3 +1,4 @@
+import asyncio
 from typing import Optional
 
 from fastapi import APIRouter, Form, Header
@@ -7,6 +8,7 @@ router = APIRouter()
 
 @router.get("/")
 async def root():
+    print("hello")
     return {"message": "Hello World"}
 
 
