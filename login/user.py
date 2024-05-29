@@ -3,7 +3,7 @@ from typing import Union, Annotated
 from uuid import UUID
 
 from fastapi import APIRouter, Query, Path, Body
-from pydantic import BaseModel, Field, HttpUrl
+from pydantic import BaseModel, Field, HttpUrl, EmailStr
 
 router = APIRouter()
 
@@ -192,7 +192,8 @@ async def update_item(item_id: int, item: Item1):
     return results
 
 
-@router.put("/items2/{item_id}")
+# 指定更多类型
+@router.put("/items1/{item_id}")
 async def read_items(
         item_id: UUID,
         start_datetime: Annotated[datetime.datetime, Body()],
@@ -211,3 +212,104 @@ async def read_items(
         "start_process": start_process,
         "duration": duration,
     }
+
+
+# 响应模型
+class Item2(BaseModel):
+    name: str
+    description: Union[str, None] = None
+    price: float
+    tax: float = 10.5
+    tags: list[str] = []
+
+
+items = {
+    "foo": {"name": "Foo", "price": 50.2},
+    "bar": {"name": "Bar", "description": "The bartenders", "price": 62, "tax": 20.2},
+    "baz": {"name": "Baz", "description": None, "price": 50.2, "tax": 10.5, "tags": []},
+}
+
+
+# 排除未设置的属性, 不包含默认属性
+# 将返回
+# {
+#     "name": "Foo",
+#     "price": 50.2
+# }
+# 但是依然建议你使用上面提到的主意，使用多个类而不是这些参数, response_model_include 和 response_model_exclude来忽略特定的属性, 它们接收一个由属性名称 str 组成的 set 来包含（忽略其他的）或者排除（包含其他的）这些属性。
+@router.get("/items2/{item_id}", response_model=Item2, response_model_exclude_unset=True)
+async def read_item(item_id: str):
+    return items[item_id]
+
+
+# 模型衍生
+class UserBase(BaseModel):
+    username: str
+    email: EmailStr
+    full_name: str | None = None
+
+
+class UserIn(UserBase):
+    password: str
+
+
+class UserOut(UserBase):
+    pass
+
+
+class UserInDB(UserBase):
+    hashed_password: str
+
+
+def fake_password_hasher(raw_password: str):
+    return "supersecret" + raw_password
+
+
+def fake_save_user(user_in: UserIn):
+    hashed_password = fake_password_hasher(user_in.password)
+    user_in_db = UserInDB(**user_in.dict(), hashed_password=hashed_password)
+    print("User saved! ..not really")
+    return user_in_db
+
+
+@router.post("/user/", response_model=UserOut)
+async def create_user(user_in: UserIn):
+    user_saved = fake_save_user(user_in)
+    return user_saved
+
+
+class BaseItem1(BaseModel):
+    description: str
+    type: str
+
+
+class CarItem(BaseItem1):
+    type: str = "car"
+
+
+class PlaneItem(BaseItem1):
+    type: str = "plane"
+    size: int
+
+
+items3 = {
+    "item1": {"description": "All my friends drive a low rider", "type": "car"},
+    "item2": {
+        "description": "Music is my aeroplane, it's my aeroplane",
+        "type": "plane",
+        "size": 5,
+    },
+}
+
+
+# 使用Union联合类型
+# 或者模型列表list[PlaneItem]
+@router.get("/items3/{item_id}", response_model=Union[PlaneItem, CarItem])
+async def read_item(item_id: str):
+    return items3[item_id]
+
+
+# 或者使用dict
+@router.get("/keyword-weights/", response_model=dict[str, float])
+async def read_keyword_weights():
+    return {"foo": 2.3, "bar": 3.4}
