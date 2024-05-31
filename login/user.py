@@ -2,7 +2,7 @@ import datetime
 from typing import Union, Annotated
 from uuid import UUID
 
-from fastapi import APIRouter, Query, Path, Body
+from fastapi import APIRouter, Query, Path, Body, Form
 from pydantic import BaseModel, Field, HttpUrl, EmailStr
 
 router = APIRouter()
@@ -37,7 +37,7 @@ async def read_items(
         q: Union[str, None] = Query(
             default=None,
             alias="item-query",
-            title="Query string Okkkkk",
+            title="Query string Ok",
             description="Query string for the items to search in the database that have a good match",
             deprecated=True)):
     results = {"items": [{"item_id": "Foo"}, {"item_id": "Bar"}]}
@@ -104,7 +104,7 @@ async def update_item(
     },
     "user": {
         "username": "dave",
-        "full_name": "Dave Grohl"
+        "full_name": "Dave Growl"
     },
     "importance": 5
     }
@@ -134,7 +134,7 @@ class Product(BaseModel):
     description: str | None = Field(
         default=None,
         alias="product-desc",
-        title="Query string Okkkkkk",
+        title="Query string Ok",
         description="Query string for the products to search in the database that have a good match",
     )
     price: float = Field(
@@ -313,3 +313,9 @@ async def read_item(item_id: str):
 @router.get("/keyword-weights/", response_model=dict[str, float])
 async def read_keyword_weights():
     return {"foo": 2.3, "bar": 3.4}
+
+
+# Form 是直接继承自 Body 的类
+@router.post("/login/")
+async def login(username: str = Form(), password: str = Form()):
+    return {"username": username, "password": password}
