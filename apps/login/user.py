@@ -27,7 +27,7 @@ async def read_user(name: str = "", password: str = ""):
 
 @router.post("/user/")
 async def create_user(user: User):
-    return {"msg": "ok", "user": user.dict()}
+    return {"msg": "ok", "user": user.model_dump()}
 
 
 @router.get("/items/")
@@ -236,7 +236,9 @@ items = {
 #     "name": "Foo",
 #     "price": 50.2
 # }
-# 但是依然建议你使用上面提到的主意，使用多个类而不是这些参数, response_model_include 和 response_model_exclude来忽略特定的属性, 它们接收一个由属性名称 str 组成的 set 来包含（忽略其他的）或者排除（包含其他的）这些属性。
+# 但是依然建议你使用上面提到的主意，
+# 使用多个类而不是这些参数, response_model_include 和 response_model_exclude来忽略特定的属性,
+# 它们接收一个由属性名称 str 组成的 set 来包含（忽略其他的）或者排除（包含其他的）这些属性。
 @router.get("/items2/{item_id}", response_model=Item2, response_model_exclude_unset=True)
 async def read_item(item_id: str):
     return items[item_id]
@@ -267,7 +269,7 @@ def fake_password_hasher(raw_password: str):
 
 def fake_save_user(user_in: UserIn):
     hashed_password = fake_password_hasher(user_in.password)
-    user_in_db = UserInDB(**user_in.dict(), hashed_password=hashed_password)
+    user_in_db = UserInDB(**user_in.model_dump(), hashed_password=hashed_password)
     print("User saved! ..not really")
     return user_in_db
 

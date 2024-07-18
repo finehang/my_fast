@@ -1,9 +1,13 @@
 from base import config
-from sqlalchemy import create_engine, Column, Integer, func, DateTime, Boolean
-from sqlalchemy.orm import sessionmaker, Session, declarative_base
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker, declarative_base
 
-SQLALCHEMY_DATABASE_URL = f"mysql+pymysql://{config.MYSQL_SQL_USER}:{config.MYSQL_SQL_PASSWORD}@{config.MYSQL_SQL_SERVER}:{config.MYSQL_SQL_PORT}/{config.MYSQL_SQL_DB_NAME}?charset=utf8mb4"
-ASYNC_SQLALCHEMY_DATABASE_URL = f"mysql+aiomysql://{config.MYSQL_SQL_USER}:{config.MYSQL_SQL_PASSWORD}@{config.MYSQL_SQL_SERVER}:{config.MYSQL_SQL_PORT}/{config.MYSQL_SQL_DB_NAME}?charset=utf8mb4"
+SQLALCHEMY_DATABASE_URL = (
+    f"mysql+pymysql://{config.MYSQL_SQL_USER}:{config.MYSQL_SQL_PASSWORD}@"
+    f"{config.MYSQL_SQL_SERVER}:{config.MYSQL_SQL_PORT}/{config.MYSQL_SQL_DB_NAME}?charset=utf8mb4")
+ASYNC_SQLALCHEMY_DATABASE_URL = (
+    f"mysql+aiomysql://{config.MYSQL_SQL_USER}:{config.MYSQL_SQL_PASSWORD}@"
+    f"{config.MYSQL_SQL_SERVER}:{config.MYSQL_SQL_PORT}/{config.MYSQL_SQL_DB_NAME}?charset=utf8mb4")
 
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL,
