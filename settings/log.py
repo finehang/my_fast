@@ -15,12 +15,12 @@ class MainLog:
         base_name = os.path.splitext(os.path.basename(file))[0] + f"_{log_time}.log"
         dir_name = os.path.dirname(os.path.abspath(file))
         relative_dir = os.path.relpath(dir_name, config.PROJECT_ROOT_PATH)
-        self.log_path = os.path.join(str(config.LOGS_BASE_PATH), str(relative_dir))
-        self.log_name = os.path.join(str(self.log_path), str(base_name))
-        self.mk_log_dir()
+        self.__log_path = os.path.join(str(config.LOGS_BASE_PATH), str(relative_dir))
+        self.__log_name = os.path.join(str(self.__log_path), str(base_name))
+        self.__mk_log_dir()
         
         logger.add(
-            sink=self.log_name,
+            sink=self.__log_name,
             encoding="utf-8",
             level="INFO",  # 日志文件记录的最低层级
             rotation="500MB",
@@ -32,14 +32,24 @@ class MainLog:
         )
         self.log = logger
     
-    def mk_log_dir(self):
-        if not os.path.exists(self.log_path):
-            os.makedirs(self.log_path)
+    def __mk_log_dir(self):
+        if not os.path.exists(self.__log_path):
+            os.makedirs(self.__log_path)
     
-    def get_logger(self, log_type):
-        """
-        返回传入类型的的日志记录器
-        :param log_type: ["info","error"]等
-        :return:
-        """
-        return getattr(self.log, log_type)
+    # TRACE：用于追踪代码中的详细信息。
+    # DEBUG：用于调试和开发过程中的详细信息。
+    # INFO：用于提供一般性的信息，表明应用程序正在按预期运行。
+    # SUCCESS：用于表示成功完成的操作。
+    # WARNING：用于表示潜在的问题或警告，不会导致应用程序的中断或错误。
+    # ERROR：用于表示错误，可能会导致应用程序的中断或异常行为。
+    # CRITICAL：用于表示严重错误，通常与应用程序无法继续执行相关。
+    
+    def __getattr__(self, item):
+        try:
+            return getattr(self.log, item)
+        except AttributeError:
+            raise AttributeError(f"{item} is not a valid log level")
+
+
+def get_logger(f=__file__):
+    return MainLog(f)

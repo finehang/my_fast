@@ -1,13 +1,11 @@
-from settings.log import MainLog
+from settings.log import get_logger
 
-my_log = MainLog(__file__)
-log_info = my_log.get_logger("info")
-log_error = my_log.get_logger("error")
+logger = get_logger(__file__)
 
 
 def mian():
-    log_info(("info!!!!", "yeah"))
-    log_error(("error!!!!", "no no no no"))
+    logger.info(("info!!!!", "yeah"))
+    logger.error(("error!!!!", "no no no no"))
 
 
 if __name__ == '__main__':
