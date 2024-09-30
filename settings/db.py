@@ -4,10 +4,12 @@ from sqlalchemy.orm import sessionmaker, declarative_base
 
 SQLALCHEMY_DATABASE_URL = (
     f"mysql+pymysql://{config.MYSQL_SQL_USER}:{config.MYSQL_SQL_PASSWORD}@"
-    f"{config.MYSQL_SQL_SERVER}:{config.MYSQL_SQL_PORT}/{config.MYSQL_SQL_DB_NAME}?charset=utf8mb4")
+    f"{config.MYSQL_SQL_SERVER}:{config.MYSQL_SQL_PORT}/{config.MYSQL_SQL_DB_NAME}?charset=utf8mb4"
+)
 ASYNC_SQLALCHEMY_DATABASE_URL = (
     f"mysql+aiomysql://{config.MYSQL_SQL_USER}:{config.MYSQL_SQL_PASSWORD}@"
-    f"{config.MYSQL_SQL_SERVER}:{config.MYSQL_SQL_PORT}/{config.MYSQL_SQL_DB_NAME}?charset=utf8mb4")
+    f"{config.MYSQL_SQL_SERVER}:{config.MYSQL_SQL_PORT}/{config.MYSQL_SQL_DB_NAME}?charset=utf8mb4"
+)
 
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL,

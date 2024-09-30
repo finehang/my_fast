@@ -34,12 +34,14 @@ async def create_user(user: User):
 # 使用 Query 为查询参数声明更多的校验和元数据的方式相同
 # 设置别名 q-->item-query
 async def read_items(
-        q: Union[str, None] = Query(
-            default=None,
-            alias="item-query",
-            title="Query string Ok",
-            description="Query string for the items to search in the database that have a good match",
-            deprecated=True)):
+    q: Union[str, None] = Query(
+        default=None,
+        alias="item-query",
+        title="Query string Ok",
+        description="Query string for the items to search in the database that have a good match",
+        deprecated=True,
+    ),
+):
     results = {"items": [{"item_id": "Foo"}, {"item_id": "Bar"}]}
     if q:
         results.update({"q": q})
@@ -48,10 +50,10 @@ async def read_items(
 
 @router.get("/items/{item_id}")
 async def read_items(
-        *,
-        item_id: int = Path(title="The ID of the item to get", ge=1),
-        size: float = Query(gt=0, lt=10.5),
-        q: str
+    *,
+    item_id: int = Path(title="The ID of the item to get", ge=1),
+    size: float = Query(gt=0, lt=10.5),
+    q: str,
 ):
     # 使用Path为查询参数声明更多的校验和元数据的方式相同
     # 将*之后的所有参数都应作为关键字参数(键值对), 也被称为kwargs, 来调用, 即使它们没有默认值
@@ -67,7 +69,7 @@ class Item(BaseModel):
     description: str | None = None
     price: float
     tax: float | None = None
-    
+
     model_config = {
         "json_schema_extra": {
             "examples": [
@@ -89,7 +91,7 @@ class Member(BaseModel):
 
 @router.put("/items0/{item_id}")
 async def update_item(
-        item_id: int, item: Item, user: Member, importance: Annotated[int, Body()]
+    item_id: int, item: Item, user: Member, importance: Annotated[int, Body()]
 ):
     """
     使用Body为查询参数声明更多的校验和元数据的方式相同
@@ -128,6 +130,7 @@ async def update_item(
 
 
 # 使用 Pydantic 的 Field 在 Pydantic 模型内部声明校验和元数据。
+
 
 class Product(BaseModel):
     name: str
@@ -195,11 +198,11 @@ async def update_item(item_id: int, item: Item1):
 # 指定更多类型
 @router.put("/items1/{item_id}")
 async def read_items(
-        item_id: UUID,
-        start_datetime: Annotated[datetime.datetime, Body()],
-        end_datetime: Annotated[datetime.datetime, Body()],
-        process_after: Annotated[datetime.timedelta, Body()],
-        repeat_at: Annotated[datetime.time | None, Body()] = None,
+    item_id: UUID,
+    start_datetime: Annotated[datetime.datetime, Body()],
+    end_datetime: Annotated[datetime.datetime, Body()],
+    process_after: Annotated[datetime.timedelta, Body()],
+    repeat_at: Annotated[datetime.time | None, Body()] = None,
 ):
     start_process = start_datetime + process_after
     duration = end_datetime - start_process
@@ -239,7 +242,9 @@ items = {
 # 但是依然建议你使用上面提到的主意，
 # 使用多个类而不是这些参数, response_model_include 和 response_model_exclude来忽略特定的属性,
 # 它们接收一个由属性名称 str 组成的 set 来包含（忽略其他的）或者排除（包含其他的）这些属性。
-@router.get("/items2/{item_id}", response_model=Item2, response_model_exclude_unset=True)
+@router.get(
+    "/items2/{item_id}", response_model=Item2, response_model_exclude_unset=True
+)
 async def read_item(item_id: str):
     return items[item_id]
 

@@ -6,7 +6,7 @@ import os
 ENVIRONMENT = os.getenv("ENVIRONMENT", "dev")
 PROJECT_ROOT_PATH = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 ENV_PATH = os.path.join(PROJECT_ROOT_PATH, "settings", f"{ENVIRONMENT}.env")
-LOGS_BASE_PATH = os.path.join(PROJECT_ROOT_PATH, 'logs')
+LOGS_BASE_PATH = os.path.join(PROJECT_ROOT_PATH, "logs")
 
 
 class Settings(BaseSettings):
@@ -15,7 +15,7 @@ class Settings(BaseSettings):
         env_file_encoding = "utf-8"
         case_sensitive = True
         extra = "ignore"
-    
+
     # MYSQL
     MYSQL_SQL_SERVER: Optional[str] = None
     MYSQL_SQL_PORT: Optional[str] = None

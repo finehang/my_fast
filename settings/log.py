@@ -18,7 +18,7 @@ class MainLog:
         self.__log_path = os.path.join(str(config.LOGS_BASE_PATH), str(relative_dir))
         self.__log_name = os.path.join(str(self.__log_path), str(base_name))
         self.__mk_log_dir()
-        
+
         logger.add(
             sink=self.__log_name,
             encoding="utf-8",
@@ -31,11 +31,11 @@ class MainLog:
             diagnose=True,
         )
         self.log = logger
-    
+
     def __mk_log_dir(self):
         if not os.path.exists(self.__log_path):
             os.makedirs(self.__log_path)
-    
+
     # TRACE：用于追踪代码中的详细信息。
     # DEBUG：用于调试和开发过程中的详细信息。
     # INFO：用于提供一般性的信息，表明应用程序正在按预期运行。
@@ -43,7 +43,7 @@ class MainLog:
     # WARNING：用于表示潜在的问题或警告，不会导致应用程序的中断或错误。
     # ERROR：用于表示错误，可能会导致应用程序的中断或异常行为。
     # CRITICAL：用于表示严重错误，通常与应用程序无法继续执行相关。
-    
+
     def __getattr__(self, item):
         try:
             return getattr(self.log, item)
